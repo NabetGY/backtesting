@@ -1,9 +1,17 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 
 class Ticker(models.Model):
 
-    symbol = models.CharField( "Ticker", max_length=7)
-    last_Refreshed = models.DateTimeField()
+    name = models.CharField( "Nombre", max_length=255)
+    symbol = models.CharField( "Simbolo", max_length=20)
+
+    def __str__(self):
+        return self.name
+
+
+class TimeSeries(models.Model):
+
+    ticker = models.ForeignKey( Ticker, on_delete=models.CASCADE, null=False, blank=False)
     interval = models.CharField(max_length=10)
-    time_series = JSONField()
+    last_Refreshed = models.DateTimeField()
+    time_series = models.JSONField()

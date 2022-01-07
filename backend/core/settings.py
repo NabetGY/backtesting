@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 import environ
+
 
 env = environ.Env()
 
@@ -49,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'django_celery_beat',
     'core',
-    'users'
+    'users',
+    'ticker'
 ]
 
 MIDDLEWARE = [
@@ -148,3 +151,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TIMEZONE = 'America/Bogota'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = 'amqp://localhost'
+
+CELERY_BEAT_SCHEDULE = {
+    "Hola": {
+        "task": "ticker.tasks.get_info_ticker",
+        "schedule": timedelta(seconds=10)
+    }
+}
