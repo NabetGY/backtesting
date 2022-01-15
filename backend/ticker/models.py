@@ -13,5 +13,5 @@ class TimeSeries(models.Model):
 
     ticker = models.ForeignKey( Ticker, on_delete=models.CASCADE, null=False, blank=False)
     interval = models.CharField(max_length=10)
-    last_Refreshed = models.DateTimeField()
+    last_Refreshed = models.DateField()
     time_series = models.JSONField()

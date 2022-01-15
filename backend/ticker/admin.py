@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from ticker.models import Ticker, TimeSeries
+
+admin.site.register(Ticker)
+admin.site.register(TimeSeries)
+

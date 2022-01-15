@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+from pickle import TRUE
 import environ
 
 
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django.contrib.postgres',
     'django_celery_beat',
     'core',
@@ -55,10 +58,24 @@ INSTALLED_APPS = [
     'ticker'
 ]
 
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -147,15 +164,38 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True
+}
+
+
 # Celery Configuration Options
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 CELERY_TIMEZONE = 'America/Bogota'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 CELERY_BEAT_SCHEDULE = {
     "Hola": {
-        "task": "ticker.tasks.get_info_ticker",
-        "schedule": timedelta(seconds=10)
+        "task": "ticker.tasks.update_time_series",
+        "schedule": timedelta(seconds=173)
     }
+}
+
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '/var/run/redis/redis-server.sock',
+    },
 }
