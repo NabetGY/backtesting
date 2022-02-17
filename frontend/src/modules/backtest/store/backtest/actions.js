@@ -30,7 +30,7 @@ export const addIndicator = ({ commit }, indicator ) => {
 }
 
 
-export const startBacktest = async ({ /* commit, */ state }, tickerData ) => {
+export const startBacktest = async ({ commit, state }, tickerData ) => {
 
     const indicator = state.indicators
 
@@ -44,7 +44,10 @@ export const startBacktest = async ({ /* commit, */ state }, tickerData ) => {
 
     const { data } = await backtestAPI.post('/backtest/', dataBacktest)
 
-    console.log(data)
+
+    commit("setBacktest", data.data)
+
+    return { ok: true, message: data.message }
 
 
     /* commit("setTickerData", tickerData) */

@@ -6,5 +6,6 @@ export default() => ({
     dateStart: "",
     dateEnd: "",
     interval: "",
-    indicators: []
+    indicators: [],
+    backtests:[]
 })

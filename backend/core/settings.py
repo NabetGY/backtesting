@@ -109,13 +109,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+USER_DB = env('USER_DB')
+PASSWORD_DB = env('PASSWORD_DB')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd2gmo8cq229n20',
-        'USER': 'xvrfhagwkpdxsh',
-        'PASSWORD': 'c1ba24ea7758784a0ea398a8501237962cfb7feb07a318da675e43ff8e5c9b81',
-        'HOST': 'ec2-3-93-94-34.compute-1.amazonaws.com',
+        'NAME': 'aws_backtest_db',
+        'USER': USER_DB,
+        'PASSWORD': PASSWORD_DB,
+        'HOST': 'database-backtest.cxkazfgexbfd.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
@@ -151,7 +154,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -204,6 +207,6 @@ CELERY_BEAT_SCHEDULE = {
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': '/var/run/redis/redis-server.sock',
+        'LOCATION': 'localhost:6379',
     },
 }

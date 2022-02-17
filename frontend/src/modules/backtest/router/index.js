@@ -9,6 +9,11 @@ export default {
             component: () => import(/* webpackChunkName: "backtest" */ '@/modules/backtest/views/BackTest.vue'),
         },
         {
+            path: '/backtestResult',
+            name: 'backtestResult',
+            component: () => import(/* webpackChunkName: "backtestResult" */ '@/modules/backtest/views/BacktestResult.vue'),
+        },
+        {
             path: '/profile',
             name: 'profile',
             beforeEnter: [ isAuthenticatedGuard ],

@@ -15,6 +15,16 @@
         />
 
         <div class="mt-5 mb-3">
+            <span class="fw-bold">Capital: </span>
+            <input v-model="tickerData.capital" type="number" class="form-control" id="validation" required>
+        </div>
+
+        <div class="mb-3">
+            <span class="fw-bold">Margen: </span>
+            <input v-model="tickerData.margen" type="number" class="form-control" id="validation">
+        </div>
+
+        <div class="mb-3">
             <span class="fw-bold">Fecha inicial: </span>
             <datepicker v-model="dateStart" :upper-limit="dateLimit"/>
         </div>
@@ -48,6 +58,10 @@ import { useStore } from 'vuex';
 import SimpleTypeahead from 'vue3-simple-typeahead'
 import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css' //Optional default CSS
 import Datepicker from 'vue3-datepicker'
+import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
+
+
 
 export default {
     components:{
@@ -60,10 +74,13 @@ export default {
         const dateLimit = ref(new Date())
         const dateStart = ref(new Date())
         const dateEnd = ref(new Date())
+        const router = useRouter()
 
 
         const tickerData = ref(
             {
+                capital:0,
+                margen:0,
                 ticker: "",
                 dateStart: "",
                 dateEnd: "",
@@ -89,10 +106,30 @@ export default {
             selectItem: ( item ) =>{
                 tickerData.value.ticker = item.symbol
             },
-            startBacktest: () => {
+            startBacktest: async() => {
                 tickerData.value.dateStart = dateFormat( dateStart.value )
                 tickerData.value.dateEnd = dateFormat( dateEnd.value )
-                store.dispatch("backtest/startBacktest", tickerData.value )
+                const { ok, message } = await store.dispatch("backtest/startBacktest", tickerData.value )
+
+                if ( !ok ) {
+                   Swal.fire('Error', message, 'error')
+               } 
+               else  {
+                   Swal.fire(
+                    {
+                        title:'Baktest Exitoso',
+                        icon:'success',
+                        allowEscapeKey:false,
+                        allowOutsideClick:false
+                    }
+                    ).then((result) => 
+                        {
+                            if (result.isConfirmed) {
+                               router.push({ name: 'backtestResult' }) 
+                            } 
+                        }
+                    )
+                }
             }
         }
     }

@@ -1,4 +1,3 @@
-from turtle import position
 import requests
 import csv
 from celery import shared_task
@@ -40,35 +39,38 @@ def get_tickers():
         cr = csv.reader(decoded_content.splitlines(), delimiter=',')
         my_list = list(cr)
         for row in my_list:
-            if row[2]=='NYSE':
-                symbol = row[0]
-                name = row[1]
-                print(symbol)
-                Ticker.objects.create(name=name, symbol=symbol)
+            symbol = row[0]
+            name = row[1]
+            print(symbol)
+            Ticker.objects.create(name=name, symbol=symbol)
 
 
 @shared_task
 def update_time_series():
 
-    dataTicker = cache.get_many( ['tickerNow', 'interval', 'position' ])
+    """ dataTicker = cache.get_many( ['tickerNow', 'interval', 'position' ]) """
 
-    print(dataTicker)
+    ticker = Ticker.objects.earliest('last_Refreshed')
 
-    if dataTicker == {}:
+    interval = '30min'
+
+
+    """ if dataTicker == {}:
         print('entro al if ...')
+        cache.clear()
         tickers = list( Ticker.objects.values_list('symbol') )
         dataTicker['tickerNow'] = tickers[0][0]
-        dataTicker['interval'] = '1min'
+        dataTicker['interval'] = '30min'
         dataTicker['position'] = 0
         cache.set( 'tickers', tickers )
         cache.set( 'tickerNow', tickers[0][0] )
-        cache.set( 'interval', '1min' )
-        cache.set( 'position', 0 )
+        cache.set( 'interval', '30min' )
+        cache.set( 'position', 0 ) """
 
         
     url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={}&interval={}&outputsize=full&apikey=ZZEAYA9XZ9SNIFGT'.format(
-        dataTicker.get('tickerNow'), dataTicker.get('interval')
-     )
+        ticker.symbol, interval
+    )
 
     print(url)
 
@@ -83,18 +85,22 @@ def update_time_series():
         
         if data.get('Note') == None:
 
-            symbol = data.get("Meta Data").get("2. Symbol")
-            interval = data.get("Meta Data").get("4. Interval")
-            last_refreshed = data.get("Meta Data").get("3. Last Refreshed")[:10]
-            timeSerieString = "Time Series ({})".format( dataTicker.get('interval'))
+            """ symbol = data.get("Meta Data").get("2. Symbol" """
+            
+            """ last_refreshed = data.get("Meta Data").get("3. Last Refreshed")[:10] """
+            timeSerieString = "Time Series (30min)"
             time_serie = data.get( timeSerieString )
-            ticker = Ticker.objects.filter(symbol=symbol).first()
-            timeSerie = TimeSeries(ticker = ticker, interval= interval,last_Refreshed = last_refreshed, time_series = time_serie)
-            timeSerie.save()
-            print('Se recopilo con exito el ticket =', symbol)
-            tickers = cache.get('tickers')
+
+            for key, value in time_serie.items():
+                timeSerie = TimeSeries( ticker=ticker, interval=1, date=key, open=value['1. open'], high=value['2. high'], low=value['3. low'], close=value['4. close'], volume=value['5. volume'],)
+                timeSerie.save()
+
+            ticker.save()
+            print('Se recopilo con exito el ticket =', ticker.symbol)
+
+            """ tickers = cache.get('tickers')
             cache.set('position', dataTicker.get('position')+1 )
-            cache.set('tickerNow', tickers[ dataTicker.get('position') ][0] )
+            cache.set('tickerNow', tickers[ dataTicker.get('position') ][0]  """
 
         else:
             print("limite excedido, gomenazai...")
