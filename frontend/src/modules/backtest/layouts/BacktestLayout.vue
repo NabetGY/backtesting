@@ -1,38 +1,27 @@
 <template>
-  
-    <div v-if="isLoading" 
-    class="row justify-content-md-center">
-      <div class="col-3 alert-info text-center-mt-5">
-        Espere por favor...
-        <h3 class="mt-2">
-          <i class="fa fa-spin fa-sync"></i>
-        </h3>
-      </div>
-    </div>
+  <v-container class="height-app">
+    <v-row v-if="isLoading" class="loading-position" no-gutters>
+        <v-col cols="12" class="text-center">
+          <v-progress-circular  :size="70" :width="7" color="purple" indeterminate>
+          </v-progress-circular>
+        </v-col>
+    </v-row>
 
-  <div v-else
-   class="container-fluid overflow-hidden">
-    <div class="row vh-100 overflow-auto">
-
-      <NavBar />
-      <router-view class="col d-flex h-sm-100 p-5 m-0"/>
-
-   </div>
-</div>
+    <router-view v-else />
+    
+  </v-container>
 
 </template>
 
 <script>
-import { computed, defineAsyncComponent } from "vue";
+import { computed } from "vue";
 import { useStore } from 'vuex';
 
 /* import useAuth from './modules/auth/composables/useAuth'
  */
 export default {
   components: {
-    NavBar: defineAsyncComponent(() =>
-      import("@/modules/shared/components/NavBar.vue")
-    ),
+    
   },
 
   setup(){
@@ -48,10 +37,10 @@ export default {
 
 <style scoped>
 
-
-    .scroll {
-        overflow-y: scroll;
-        height: calc(100vh);
-    }
-
+  .loading-position{
+      position: absolute;
+      top: 40%;
+      right: 50%;
+      left: 50%;
+  }
 </style>

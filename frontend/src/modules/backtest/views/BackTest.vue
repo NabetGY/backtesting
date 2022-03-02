@@ -1,21 +1,18 @@
 <template>
-  <div class="row">
+    <v-row >
 
-        <TickerSelectionVue />
-
-      <div class="col-8 pt-3">
+        <TickerFormVue />
         
-        <IndicatorInfoVue v-for="item in indicators" :key="item.indicator" :indicator="item" />
+        <v-col cols="12" sm="8" class="mx-8">
+        
+            <IndicatorInfoCardVue v-for="item in indicators" :key="item.indicator" :indicator="item" />
 
-        <div class="row py-3 mb-4">
+            <IndicatorDialogVue />
 
-            <IndicatorModalVue />
+        </v-col>
 
-        </div>
-
-      </div>
-
-  </div>
+    </v-row>
+    
 </template>
 
 <script>
@@ -25,9 +22,10 @@ import { useStore } from 'vuex'
 
 export default {
     components:{
-        IndicatorModalVue: defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorModal.vue')),
-        TickerSelectionVue: defineAsyncComponent( () => import('@/modules/backtest/components/TickerSelection.vue')),
-        IndicatorInfoVue: defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorInfo.vue')),
+        IndicatorDialogVue: defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorDialog.vue')),
+        TickerFormVue: defineAsyncComponent( () => import('@/modules/backtest/components/TickerForm.vue')),
+        IndicatorInfoCardVue: defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorInfoCard.vue')),
+
     },
     
     setup() {
@@ -35,6 +33,7 @@ export default {
         const store = useStore()
         const date = ref(new Date())
         const dateLimit = ref(new Date())
+        
 
         return{
             tickers: computed( () => store.state.backtest.tickers ),
@@ -53,11 +52,14 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
     .box-indicator{
+        height: 570px;
+        overflow-y: scroll;
         border-radius: 5px;
         background-color: rgb(227, 224, 224);
     }
+
 
 </style>

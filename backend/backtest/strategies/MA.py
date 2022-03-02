@@ -9,26 +9,43 @@ def get_time_series(symbol, start_date, end_date):
     dateRange = TimeSeries.objects.filter(ticker=ticker,date__range=(start_date, end_date))
     return dateRange.values()
 
-def get_sma(periods, dataframe):
-    name = 'sma_{}'.format(periods)
-    dataframe[name] = dataframe.iloc[:,8].rolling(periods).mean()
+def get_sma(period, dataframe):
+    name = 'sma_{}'.format(period)
+    dataframe[name] = dataframe['close'].rolling(period).mean()
+    return name
+
+def get_ema(period, dataframe):
+    name = 'ema_{}'.format(period)
+    dataframe[name] = dataframe['close'].ewm(span=period, adjust=False).mean()
+    return name
 
 
-def get_MACross( dataframe, list_MA ):
+def get_MACross( dataframe, dataList ):
 
-    for item in list_MA:
-        get_sma(item , dataframe)
+    nameList = []
+
+    for item in dataList:
+        if item.get('MA') == 'Media movil simple':
+            nameList.append( get_sma( item.get('period') , dataframe ) )
+        elif item.get('MA') == 'Media movil exponencial':
+            nameList.append( get_ema( item.get('period') , dataframe ) )
+
+    first = dataframe.columns.get_loc(nameList[0])
+    second = first+1
+
         
-    dataframe['signal'] = np.where(dataframe['sma_7'] > dataframe['sma_21'], 1, 0)
+    dataframe['signal'] = np.where((dataframe.iloc[:, second:].lt(dataframe.iloc[:, first], axis=0)).all(1), 1, 0)
     dataframe['position'] = dataframe['signal'].diff()
     dataframe.at[0, 'position'] = 0
     dataframe['buy']=np.where( dataframe['position'] == 1, dataframe['close'], np.NAN)
     dataframe['sell']=np.where( dataframe['position'] == -1, dataframe['close'], np.NAN)
-    print (dataframe[['close','sma_7', 'sma_21']])
+    print (dataframe.to_string())
     return dataframe
 
 
 def get_resumen( dateframe ):
+
+    print (dateframe[['date_time','price_in', 'price_out', 'positions', 'profit_loss' ]])
 
     resumen = {}
 
@@ -65,14 +82,24 @@ def get_report( dataframe, capital ):
     return dataframeReport
 
 
+def indicatorFilter( df, data ):
 
-def backtest_MACross(symbol, capital, start_date, end_date):
+    for item in data:
+
+        if item.get('indicatorName') == 'MACD':
+            df = get_MACross( df, item.get('config') )
+        
+    return df
+
+
+
+def backtest(symbol, capital, start_date, end_date, indicatorData):
 
     data = get_time_series(symbol, start_date, end_date)
     
     df =  pd.DataFrame(data)
 
-    df = get_MACross( df, [7,21] )
+    df = indicatorFilter( df, indicatorData )
     
     df2 = get_report( df, capital )
 

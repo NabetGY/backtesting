@@ -1,50 +1,69 @@
 <template>
 
-<div class="row">
-    <div class="col-12">
-        <ul class="nav nav-tabs justify-content-center">
-            <li class="nav-item">
-                <button @click="isActive = !isActive"  class="nav-link active" aria-current="page">Reporte</button>
-            </li>
-            <li class="nav-item">
-                <button @click="isActive = !isActive" class="nav-link">Operaciones</button>
-            </li>
-            <li class="nav-item">
-                <button @click="isActive = !isActive" class="nav-link">Grafica</button>
-            </li>
-        </ul>
-    </div>
-    <div class="col-12">
+    <v-row class="border my-5 pa-1">
+        <v-col align-self="center" class="border overflow-x-auto my-3 text-center">
 
-        <ReportResumenVue v-show="isActive" />
+            <button
+                v-for="( _, tab) in tabs"
+                :key="tab"
+                :class="['tab-button', { active: currentTab === tab }]"
+                @click="currentTab = tab"
+                >
+                {{ tab }} 
+           </button>
 
-        <OperationsBacktestVue v-show="!isActive"/>
-     
-    </div>
-</div>
+            <component :is="tabs[currentTab]" class="tab"></component>
+
+        </v-col>
+
+    </v-row >
 
 </template>
 
-<script>
-import { defineAsyncComponent, ref } from '@vue/runtime-core'
+<script setup>
 
-export default {
-    components: {
-        ReportResumenVue: defineAsyncComponent( () => import('@/modules/backtest/components/ReportResumen.vue')),
-        OperationsBacktestVue: defineAsyncComponent( () => import('@/modules/backtest/components/OperationsBacktest.vue')),
+import { defineAsyncComponent, ref } from 'vue'
 
-    },
-    setup(){
-        const isActive = ref(true)
+    const ReportResumenVue = defineAsyncComponent( () => import('@/modules/backtest/components/ReportResumen.vue'))
+    const OperationsBacktestVue = defineAsyncComponent( () => import('@/modules/backtest/components/OperationsBacktest.vue'))
+    const ChartVue = defineAsyncComponent( () => import('@/modules/backtest/components/Chart.vue'))
 
-        return{
-            isActive,
-        }
+
+    const currentTab = ref('Resumen')
+    const tabs = {
+        Resumen: ReportResumenVue,
+        Operaciones: OperationsBacktestVue,
+        Grafico: ChartVue
     }
-
-}
+        
 </script>
 
-<style>
+<style scoped>
+
+    .border {
+        border: 1px solid #eee;
+        border-radius: 2px;
+    }
+
+    .tab-button {
+        padding: 6px 10px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        background: #f0f0f0;
+        margin-bottom: -1px;
+        margin-right: -1px;
+    }
+    .tab-button:hover {
+        background: #e0e0e0;
+    }
+    .tab-button.active {
+        background: #e0e0e0;
+    }
+    .tab {
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
 
 </style>

@@ -1,54 +1,64 @@
 <template>
-    <table class="table table-striped table-hover">
+
+    <v-table fixed-header >
+
         <thead>
-            <tr >
-                <th scope="col">#</th>
-                <th scope="col">In/Out</th>
-                <th scope="col">Date</th>
-                <th scope="col">Price in</th>
-                <th scope="col">STP</th>
-                <th scope="col">STP %</th>
-                <th scope="col">Positions</th>
-                <th scope="col">TGT</th>
-                <th scope="col">Price out</th>
-                <th scope="col">Profit Loss</th>
+            <tr>
+                <th class="text-left">#</th>
+                <th class="text-left">In/Out</th>
+                <th class="text-left">Date</th>
+                <th class="text-left">Price in</th>
+                <th class="text-left">STP</th>
+                <th class="text-left">STP %</th>
+                <th class="text-left">Positions</th>
+                <th class="text-left">TGT</th>
+                <th class="text-left">Price out</th>
+                <th class="text-left">Profit Loss</th>
             </tr>
         </thead>
+
         <tbody>
-            <tr v-for="(item, index) in report.data" :key="item.id">
-                <th scope="row">{{ index+1 }}</th>
+            <tr v-for="(item, index) in report.data" :key="index" >
+
+                <th>{{ index+1 }}</th>
                 <td v-if="item[0]===-1">
-                    <i class="bi bi-box-arrow-left"></i>
+                    <v-icon large color="red darken-2"> mdi-arrow-bottom-left-thick </v-icon>
                 </td>
-                <td v-else><i class="bi bi-box-arrow-right"></i></td>
-                <td >{{ item[1] }}</td>
+                <td v-else>
+                    <v-icon large color="green darken-2"> mdi-arrow-top-right-thick </v-icon>
+                </td>
+                <td>{{ item[1] }}</td>
                 <td>{{ item[2] }}</td>
-                <td scope="col">STP</td>
-                <td scope="col">STP %</td>
+                <td>STP</td>
+                <td>STP %</td>
                 <td>{{ item[4] }}</td>
-                <td scope="col">TGT</td>
+                <td>TGT</td>
                 <td>{{ item[3] }}</td>
-                <td :class="{ 'table-success':item[5] > 0, 'table-danger':item[5] < 0  }">{{ item[5] }}</td>
+                <td>
+                    <v-chip :color="getColor(item[5])" dark >
+                        {{ item[5] }}
+                    </v-chip>
+                </td>
             </tr>
         </tbody>
-    </table>
+  
+    </v-table>
+
 </template>
 
-<script>
+<script setup>
 import { useStore } from 'vuex'
-export default {
-    setup() {
-        const store = useStore()
 
-        const { report } = store.state.backtest.backtests[0]
+    const store = useStore()
 
-        return{
-            report
-        }
+    const { report } = store.state.backtest.backtests[0]
+
+    const getColor = (item) => {
+        if (item < 0) return 'red'
+        else if (item > 0) return 'green'
+        else return 'white'
     }
-    
-
-}
+            
 </script>
 
 <style>

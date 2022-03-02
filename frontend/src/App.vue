@@ -1,53 +1,57 @@
 <template>
+    <v-app>
+        <v-app-bar app absolute color="deep-purple">
 
+            <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-toolbar-title>Dashboard</v-toolbar-title>
+        </v-app-bar>
 
-    <router-view class="" />
-     
+        <v-navigation-drawer app v-model="drawer" absolute temporary>
+            <v-list nav dense>
+                <v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
+
+                    <v-list-item prepend-icon="mdi-home" title="Inicio"></v-list-item>
+                    <v-list-item prepend-icon="mdi-account" title="Cuenta"></v-list-item>
+                    
+                </v-list-item-group>
+            </v-list>
+        </v-navigation-drawer>
+
+        <v-main>
+            <router-view ></router-view>
+        </v-main>
+
+    </v-app>
+
 </template>
 
-<script>
-// import { defineAsyncComponent } from "vue";
-// /* import useAuth from './modules/auth/composables/useAuth'
-//  */
-// export default {
-//   components: {
-//     NavBar: defineAsyncComponent(() =>
-//       import("@/modules/shared/components/NavBar.vue")
-//     ),
+<script setup>
 
-//   },
-//   setup(){
+import { ref } from "vue";
 
-//   }
-// };
+    const intViewportHeight = ref("")
+    const height = window.innerHeight-64
+    intViewportHeight.value = `${height}px`
+
+    const setHeightApp = () => { 
+        let height = window.innerHeight-64
+        intViewportHeight.value = `${height}px`
+    };
+
+    window.addEventListener('resize', setHeightApp);
+
+    const drawer = ref(false)
+    const group = ref(null)
+    
 </script>
 
 <style>
-.gradient-bg {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  background: linear-gradient(124.68deg, #b0d5e4, #616fbb);
-}
-.bdd {
-  margin-bottom: 100px;
+
+html { overflow-y: hidden }
+
+.height-app{
+    height: v-bind(intViewportHeight);
+    overflow-y: auto;
 }
 
-html,
-body {
-  margin: 0px 0px 0px 0px;
-}
-
-.wrapper {
-  height: calc(100vh - 178.5px);
-  overflow: auto;
-}
-
-.btn-indigo {
-  background-color: #3f51b5;
-  border-color: #3f51b5;
-  color: white;
-}
 </style>

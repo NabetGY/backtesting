@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from backtest.strategies.MA import backtest_MACross
+from backtest.strategies.MA import backtest
 
 from backtest.serializers import BacktestSerializer
 
@@ -23,7 +23,11 @@ class BackTestAPIView( APIView ):
     def post( self, request):
         print( request.data )
 
-        resumen, report = backtest_MACross( request.data["ticker"], request.data["capital"], request.data["dateStart"], request.data["dateEnd"])
+        resumen, report = backtest( 
+            request.data["ticker"], 
+            request.data["capital"], request.data["dateStart"], 
+            request.data["dateEnd"], request.data["indicatorsData"]
+        )
 
         data = {
             "resumen": resumen,

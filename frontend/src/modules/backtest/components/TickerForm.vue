@@ -1,9 +1,10 @@
 <template>
 
-    <div class="col-3 me-5 pt-3">
+    <v-col cols="12"  sm="3" class="my-5 border" >
         
-        <span class="fw-bold">Selecciona un Ticker:</span>
+        <span class="font-weight-bold">Selecciona un Ticker:</span>
         <SimpleTypeahead
+            class="mb-5 "
             placeholder="APPL"
             :items="tickers"
             :minInputLength="1"
@@ -14,41 +15,36 @@
             }"
         />
 
-        <div class="mt-5 mb-3">
-            <span class="fw-bold">Capital: </span>
-            <input v-model="tickerData.capital" type="number" class="form-control" id="validation" required>
+        <div class="mb-1">
+            <v-text-field min=0 type="number" v-model="tickerData.capital" label="Capital" required>
+            </v-text-field>
         </div>
 
-        <div class="mb-3">
-            <span class="fw-bold">Margen: </span>
-            <input v-model="tickerData.margen" type="number" class="form-control" id="validation">
+        <div class="mb-1">
+            <v-text-field min=0 type="number" v-model="tickerData.margen" label="Margen" required>
+            </v-text-field>
         </div>
 
-        <div class="mb-3">
-            <span class="fw-bold">Fecha inicial: </span>
-            <datepicker v-model="dateStart" :upper-limit="dateLimit"/>
+        <div class="mb-1">
+            <span class="font-weight-bold">Fecha inicial: </span>
+            <datepicker v-model="dateStart" :upper-limit="dateLimit" typeable />
         </div>
 
-        <div class="mb-3">
-            <span class="fw-bold">Fecha final: </span>
-            <datepicker v-model="dateEnd" :upper-limit="dateLimit"/>
+        <div class="mb-7">
+            <span class="font-weight-bold">Fecha final: </span>
+            <datepicker v-model="dateEnd" :upper-limit="dateLimit" typeable />
         </div>
 
-        <div class="form-floating mt-5 mb-3">
-            <select v-model="tickerData.interval" class="form-select" id="floatingSelect" aria-label="Floating label select example">
-                <option value="1min">1 min</option>
-                <option value="5min">5 min</option>
-                <option value="60min">60 min</option>
-            </select>
-            <label for="floatingSelect">Periodo</label>
+        <div class="mb-1">
+            <v-select v-model="tickerData.interval" :items="listPeriod" label="Periodo"></v-select>
         </div>
 
-        <div class="d-grid gap-2 mt-5 col-6 mx-auto">
-            <button @click="startBacktest" class="btn btn-primary" type="button">Iniciar</button>
-            <button class="btn btn-danger" type="button">Limpiar</button>
+        <div class="d-flex flex-column">
+            <v-btn @click="startBacktest" color="primary">Iniciar</v-btn>
+            <v-btn class="mt-2" color="warning">Limpiar</v-btn>
         </div>
 
-    </div>
+    </v-col>
     
 </template>
 
@@ -98,6 +94,7 @@ export default {
         }
 
         return {
+            listPeriod: ['30min', '60min', 'Diario', 'Semanal'],
             tickerData,
             dateLimit,
             dateStart,
@@ -109,6 +106,7 @@ export default {
             startBacktest: async() => {
                 tickerData.value.dateStart = dateFormat( dateStart.value )
                 tickerData.value.dateEnd = dateFormat( dateEnd.value )
+                console.log(tickerData)
                 const { ok, message } = await store.dispatch("backtest/startBacktest", tickerData.value )
 
                 if ( !ok ) {
@@ -137,5 +135,26 @@ export default {
 </script>
 
 <style>
+
+    .bg-gray{
+        background-color: #EFEFEF;
+    }
+
+    
+    .simple-typeahead-input, div.v3dp__input_wrapper input{
+        height: 45px;
+        padding-left: 20px;
+        width: 100%;
+        background-color: #EFEFEF;
+        border-bottom: 1px solid #9D9D9D;
+        transition: 0.3s;
+
+    }
+
+    .simple-typeahead-input:hover, div.v3dp__input_wrapper input:hover{
+
+        background-color: #cfcece;
+
+    }
 
 </style>
