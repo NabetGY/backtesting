@@ -5567,6 +5567,11 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
+klinecharts@^8.3.3:
+  version "8.3.3"
+  resolved "https://registry.yarnpkg.com/klinecharts/-/klinecharts-8.3.3.tgz#9993e14f21341e4b32b93dea961948e605a97c88"
+  integrity sha512-xuUi0nmeXB0JoF8M19h2W+/yOKLgJ43I8sjL9diAZ9jJmGmqf1SqQsVA6ScUezT+J6T1j+eyXyll+tk+xcU1mA==
+
 klona@^2.0.4, klona@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.5.tgz#d166574d90076395d9963aa7a928fabb8d76afbc"
@@ -8509,10 +8514,10 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
 
-trading-vue-js-ko@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/trading-vue-js-ko/-/trading-vue-js-ko-1.0.1.tgz#8759b46e84e48a9db4044ac3b6c6940231fb9a03"
-  integrity sha512-U40ad5uJMrQ9mV4RQQFUIC2jIy8HgFGfaYqJtR6AjDK9a8EW3UMT9NlIWz6rbZW9uZXBXv5M4MilM8E8wuQdZg==
+trading-vue-js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/trading-vue-js/-/trading-vue-js-1.0.2.tgz#cdc29dda457a72db13123c0b21514ee8eae51c24"
+  integrity sha512-RObZR4OF5rtdgh/CyyRv0soPxlVlwHudlpAziOeQeOeId4j/2RcGUSp4/lKwzYo8b51tnAiRnMtDS+ZSmg208g==
   dependencies:
     "@babel/runtime" "^7.13.10"
     arrayslicer "^1.2.3"
@@ -8781,6 +8786,11 @@ vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.npmjs.org/vm-browserify/-/vm-browserify-1.1.2.tgz"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
+
+vue-2-3@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vue-2-3/-/vue-2-3-1.0.0.tgz#44e7476c0485b86b4eb87abe987a1a97e6f6fbe5"
+  integrity sha512-xO2tSTpUfSKrP8ZCzciX3ZFX33rf0R+NtQnciSXLyCFR2zUofWpjiSK9Hf2gfEF7OEFVXseZrmH978Lb0TtLZg==
 
 vue-cli-plugin-vuetify@~2.4.5:
   version "2.4.5"

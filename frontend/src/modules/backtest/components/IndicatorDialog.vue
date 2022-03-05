@@ -53,6 +53,10 @@
     import { ref, defineAsyncComponent } from 'vue'
 
 
+    const DochianChannelsDialogVue = defineAsyncComponent(() =>
+        import("@/modules/backtest/components/DochianChannelsDialog.vue")
+    )
+
     const MADialogVue = defineAsyncComponent(() =>
         import("@/modules/backtest/components/MADialog.vue")
     )
@@ -63,11 +67,12 @@
     
     const indicator = ref("MADialogVue")
     const dialogSelectIndicator = ref(false)
-    const listIndicators = ['MADialogVue', 'IchimokuDialogVue', 'Bandas de Bollinger', 'Donching channel']
+    const listIndicators = ['MADialogVue', 'DochianChannelsDialogVue', 'IchimokuDialogVue', 'Bandas de Bollinger']
 
     const dialogs = {
         MADialogVue,
         IchimokuDialogVue,
+        DochianChannelsDialogVue,
     }
 
 </script>

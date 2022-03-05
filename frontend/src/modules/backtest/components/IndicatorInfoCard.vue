@@ -59,6 +59,14 @@ import { computed, defineProps, ref } from 'vue'
                 lista.push(ichimokuResumen(iterator)) 
             }
         }
+        else if(  props.indicator.indicatorName === "DonchianChannels"){
+            color = "amber-lighten-1"
+            img_card ="https://res.cloudinary.com/lumayo/image/upload/v1646446457/donchianchannels_waircd.png"
+            for (const iterator of props.indicator.config) { 
+                console.log(iterator)
+                lista.push(donchianChannelsResumen(iterator)) 
+            }
+        }
         return lista
     })
 
@@ -75,6 +83,11 @@ import { computed, defineProps, ref } from 'vue'
 
     function macdResumen( config ) {
         let resumen = `Tipo: ${ config.MA }, periodos: ${ config.period }.`
+        return resumen
+    }
+
+    function donchianChannelsResumen( config ) {
+        let resumen = `Tamaño del Periodo: ${ config.period }.`
         return resumen
     }
 

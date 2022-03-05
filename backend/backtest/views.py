@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from backtest.strategies.MA import backtest
+from backtest.strategies.backtesting import backtest
 
 from backtest.serializers import BacktestSerializer
 

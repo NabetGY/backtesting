@@ -1,46 +1,17 @@
 import numpy as np
 import pandas as pd
 
+from backtest.strategies.MACD import get_MACross
+from backtest.strategies.DonchianChannels import get_DonchianChannels
+
 from ticker.models import Ticker, TimeSeries
+
 
 def get_time_series(symbol, start_date, end_date):
 
     ticker = Ticker.objects.filter(symbol=symbol).first()
     dateRange = TimeSeries.objects.filter(ticker=ticker,date__range=(start_date, end_date))
     return dateRange.values()
-
-def get_sma(period, dataframe):
-    name = 'sma_{}'.format(period)
-    dataframe[name] = dataframe['close'].rolling(period).mean()
-    return name
-
-def get_ema(period, dataframe):
-    name = 'ema_{}'.format(period)
-    dataframe[name] = dataframe['close'].ewm(span=period, adjust=False).mean()
-    return name
-
-
-def get_MACross( dataframe, dataList ):
-
-    nameList = []
-
-    for item in dataList:
-        if item.get('MA') == 'Media movil simple':
-            nameList.append( get_sma( item.get('period') , dataframe ) )
-        elif item.get('MA') == 'Media movil exponencial':
-            nameList.append( get_ema( item.get('period') , dataframe ) )
-
-    first = dataframe.columns.get_loc(nameList[0])
-    second = first+1
-
-        
-    dataframe['signal'] = np.where((dataframe.iloc[:, second:].lt(dataframe.iloc[:, first], axis=0)).all(1), 1, 0)
-    dataframe['position'] = dataframe['signal'].diff()
-    dataframe.at[0, 'position'] = 0
-    dataframe['buy']=np.where( dataframe['position'] == 1, dataframe['close'], np.NAN)
-    dataframe['sell']=np.where( dataframe['position'] == -1, dataframe['close'], np.NAN)
-    print (dataframe.to_string())
-    return dataframe
 
 
 def get_resumen( dateframe ):
@@ -61,13 +32,12 @@ def get_resumen( dateframe ):
 
     return resumen
 
-
 def get_report( dataframe, capital ):
     sizePosition = capital*0.1
     lossMax = capital*0.01
     stopLoss = lossMax/sizePosition
     target= 2*stopLoss
-
+    print(dataframe.to_string())
     dataframeReport = dataframe.loc[ dataframe['position'] != 0.0, ["position", "date", "buy", "sell"]]
 
     dataframeReport.columns = ["In_Out", "date_time", "price_in", "price_out"]
@@ -89,8 +59,10 @@ def indicatorFilter( df, data ):
         if item.get('indicatorName') == 'MACD':
             df = get_MACross( df, item.get('config') )
         
+        if item.get('indicatorName') == 'DonchianChannels':
+            df = get_DonchianChannels( df, item.get('config') )
+        
     return df
-
 
 
 def backtest(symbol, capital, start_date, end_date, indicatorData):
