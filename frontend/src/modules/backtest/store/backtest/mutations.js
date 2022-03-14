@@ -19,5 +19,9 @@ export const setIndicator = ( state, indicator ) => {
 
 export const setBacktest = ( state, backtest ) => {
 
-    state.backtests = [ ...state.backtests, backtest]
+    state.backtests = [ backtest, ...state.backtests ]
+}
+
+export const updateListIndicators = ( state, indicators ) => {
+    state.indicators = indicators
 }

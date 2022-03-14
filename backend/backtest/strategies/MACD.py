@@ -25,11 +25,13 @@ def get_MACross( dataframe, dataList ):
     second = first+1
 
     dataframe['signal'] = np.where((dataframe.iloc[:, second:].lt(dataframe.iloc[:, first], axis=0)).all(1), 1, 0)
-    dataframe['position'] = dataframe['signal'].diff()
-    dataframe.at[0, 'position'] = 0
-    dataframe['buy']=np.where( dataframe['position'] == 1, dataframe['close'], np.NAN)
-    dataframe['sell']=np.where( dataframe['position'] == -1, dataframe['close'], np.NAN)
-    return dataframe
+    
+    # dataframe['position'] = dataframe['signal'].diff()
+    # dataframe.at[0, 'position'] = 0
+    # dataframe['buy']=np.where( dataframe['position'] == 1, dataframe['close'], np.NAN)
+    # dataframe['sell']=np.where( dataframe['position'] == -1, dataframe['close'], np.NAN)
+    
+    return dataframe['signal']
 
 
 

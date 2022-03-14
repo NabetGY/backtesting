@@ -4,8 +4,14 @@
         <TickerFormVue />
         
         <v-col cols="12" sm="8" class="mx-8">
-        
-            <IndicatorInfoCardVue v-for="item in indicators" :key="item.indicator" :indicator="item" />
+
+            <draggable v-model="indicators" :move="checkMove">
+                <transition-group>
+
+                    <IndicatorInfoCardVue v-for="(item, index) in indicators" :key="index" :indicator="item" :index="index"  />
+
+                </transition-group>
+            </draggable>
 
             <IndicatorDialogVue />
 
@@ -15,40 +21,36 @@
     
 </template>
 
-<script>
+<script setup>
 
-import { computed, defineAsyncComponent, ref } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { useStore } from 'vuex'
+import { VueDraggableNext as  draggable } from 'vue-draggable-next'
 
-export default {
-    components:{
-        IndicatorDialogVue: defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorDialog.vue')),
-        TickerFormVue: defineAsyncComponent( () => import('@/modules/backtest/components/TickerForm.vue')),
-        IndicatorInfoCardVue: defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorInfoCard.vue')),
+    const IndicatorDialogVue = defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorDialog.vue'))
+    const TickerFormVue = defineAsyncComponent( () => import('@/modules/backtest/components/TickerForm.vue'))
+    const IndicatorInfoCardVue = defineAsyncComponent( () => import('@/modules/backtest/components/IndicatorInfoCard.vue'))
 
-    },
-    
-    setup() {
 
-        const store = useStore()
-        const date = ref(new Date())
-        const dateLimit = ref(new Date())
-        
 
-        return{
-            tickers: computed( () => store.state.backtest.tickers ),
-            indicators: computed( () => store.state.backtest.indicators ),
-            selectItem: ( item ) =>{
-                console.log(item.symbol)
-            },
-            date,
-            dateLimit,
-            muestra: ( date ) => {
-                console.log( date )
-            }
+    const store = useStore()
+
+    const indicators = computed({
+        get() {
+            return store.state.backtest.indicators
+        },
+        set(newValue) {
+            store.dispatch("backtest/updateListIndicators", newValue )
         }
+    })
+        
+    function checkMove(evt){
+        console.log(evt)
     }
-}
+    /* const color = (name)  => {
+        const lista = ['uno', 'dos', 'tres', 'cuatro']
+        return lista[indicators.value.findIndex(indicator => indicator.indicatorName === name )]
+    } */
 
 </script>
 

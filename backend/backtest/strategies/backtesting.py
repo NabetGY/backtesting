@@ -3,15 +3,18 @@ import pandas as pd
 
 from backtest.strategies.MACD import get_MACross
 from backtest.strategies.DonchianChannels import get_DonchianChannels
+from backtest.strategies.bollingerBandas import get_BollingerBands
+from backtest.strategies.ichimokuClouds import get_IchimokuClouds
+
+
 
 from ticker.models import Ticker, TimeSeries
-
 
 def get_time_series(symbol, start_date, end_date):
 
     ticker = Ticker.objects.filter(symbol=symbol).first()
-    dateRange = TimeSeries.objects.filter(ticker=ticker,date__range=(start_date, end_date))
-    return dateRange.values()
+    dateRange = TimeSeries.objects.filter(ticker=ticker,time__range=(start_date, end_date)).order_by('time')
+    return dateRange
 
 
 def get_resumen( dateframe ):
@@ -32,24 +35,35 @@ def get_resumen( dateframe ):
 
     return resumen
 
+
 def get_report( dataframe, capital ):
+    
     sizePosition = capital*0.1
     lossMax = capital*0.01
     stopLoss = lossMax/sizePosition
     target= 2*stopLoss
-    print(dataframe.to_string())
-    dataframeReport = dataframe.loc[ dataframe['position'] != 0.0, ["position", "date", "buy", "sell"]]
 
-    dataframeReport.columns = ["In_Out", "date_time", "price_in", "price_out"]
+    dataframeReport = dataframe.loc[ dataframe['position'] != 0.0, ['position', 'time', 'buy', 'sell']]
+
+    dataframeReport.columns = ["In_Out", "date_time", "price_in",  "price_out"]
 
     price_out = pd.to_numeric(dataframeReport["price_out"])
     price_in = pd.to_numeric(dataframeReport["price_in"])
 
+    dataframeReport["stp"] = np.where( price_in.notna() , price_in-(price_in*stopLoss), price_in-(price_in*stopLoss) )
+
+    dataframeReport["stp%"] = np.where( price_in.notna() , stopLoss*100, stopLoss*100)
+
     dataframeReport["positions"] = np.where( price_in.notna() , np.floor( sizePosition/price_in), np.floor( sizePosition/price_out) )
 
-    dataframeReport["profit_loss"] = np.where( price_out.notna() , ((price_out-price_in.shift())*dataframeReport["positions"]), np.NaN)
+    dataframeReport["positions%"] = np.where( price_in.notna() , target*100, target*100)
 
+    dataframeReport["tgt"] = np.where( price_in.notna() , price_in+(price_in*target), price_in+(price_in*target) )
+
+    dataframeReport["profit_loss"] = np.where( price_out.notna() , ((price_out-price_in.shift())*dataframeReport["positions"]), np.NaN)
+    
     return dataframeReport
+
 
 
 def indicatorFilter( df, data ):
@@ -57,26 +71,46 @@ def indicatorFilter( df, data ):
     for item in data:
 
         if item.get('indicatorName') == 'MACD':
-            df = get_MACross( df, item.get('config') )
+            df['signal_macd'] = get_MACross( df.copy(), item.get('config') )
         
         if item.get('indicatorName') == 'DonchianChannels':
-            df = get_DonchianChannels( df, item.get('config') )
-        
+            df['signal_donchianChannels'] = get_DonchianChannels( df.copy(), item.get('config') )
+
+        if item.get('indicatorName') == 'BollingerBands':
+            df['signal_bollingerBands'] = get_BollingerBands( df.copy(), item.get('config') )
+
+        if item.get('indicatorName') == 'ichimokuClouds':
+            df['signal_ichimokuClouds'] = get_IchimokuClouds( df.copy(), item.get('config') )
+
+
     return df
+
+
+def get_positions(dataframe):
+
+    dataframe['signal']= dataframe.iloc[:,9:].prod(axis=1)
+    dataframe['position'] = dataframe['signal'].diff()
+    dataframe.at[0, 'position'] = 0
+    dataframe['buy']=np.where( dataframe['position'] == 1, dataframe['close'], np.NAN)
+    dataframe['sell']=np.where( dataframe['position'] == -1, dataframe['close'], np.NAN)
+
+    return dataframe
 
 
 def backtest(symbol, capital, start_date, end_date, indicatorData):
 
     data = get_time_series(symbol, start_date, end_date)
     
-    df =  pd.DataFrame(data)
+    df =  pd.DataFrame(data.values())
 
     df = indicatorFilter( df, indicatorData )
-    
+
+    df = get_positions( df )
+
     df2 = get_report( df, capital )
 
     resumen = get_resumen(df2)
 
     df2 = df2.fillna('')
 
-    return resumen, df2.to_dict('tight')
+    return resumen, df2.to_dict('tight'), data

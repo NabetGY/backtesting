@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from backtest.strategies.backtesting import backtest
 
 from backtest.serializers import BacktestSerializer
+from ticker.serializers import TickerSerializer, TimeSeriesSerializer
 
 
 class BacktestViewSet( viewsets.ModelViewSet ):
@@ -23,15 +24,17 @@ class BackTestAPIView( APIView ):
     def post( self, request):
         print( request.data )
 
-        resumen, report = backtest( 
+        resumen, report, timeSerie= backtest( 
             request.data["ticker"], 
             request.data["capital"], request.data["dateStart"], 
             request.data["dateEnd"], request.data["indicatorsData"]
         )
-
+        
+        timeSerieSerializer = TimeSeriesSerializer(timeSerie, many=True)
         data = {
             "resumen": resumen,
-            "report": report
+            "report": report,
+            "data": timeSerieSerializer.data
         }
         
         return Response(

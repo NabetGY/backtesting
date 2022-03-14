@@ -57,6 +57,10 @@
         import("@/modules/backtest/components/DochianChannelsDialog.vue")
     )
 
+    const BollingerBandsDialogVue = defineAsyncComponent(() =>
+        import("@/modules/backtest/components/BollingerBandsDialog.vue")
+    )
+
     const MADialogVue = defineAsyncComponent(() =>
         import("@/modules/backtest/components/MADialog.vue")
     )
@@ -67,12 +71,13 @@
     
     const indicator = ref("MADialogVue")
     const dialogSelectIndicator = ref(false)
-    const listIndicators = ['MADialogVue', 'DochianChannelsDialogVue', 'IchimokuDialogVue', 'Bandas de Bollinger']
+    const listIndicators = ['MADialogVue', 'DochianChannelsDialogVue', 'IchimokuDialogVue', 'BollingerBandsDialogVue']
 
     const dialogs = {
         MADialogVue,
         IchimokuDialogVue,
         DochianChannelsDialogVue,
+        BollingerBandsDialogVue,
     }
 
 </script>

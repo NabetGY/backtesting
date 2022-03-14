@@ -95,16 +95,16 @@ import { useStore } from 'vuex'
     const dialog = ref(false)
 
     const indicators = ref({
-        indicatorName: "Ichimoku",
+        indicatorName: "ichimokuClouds",
         config: []
     })
 
     const data = ref({
-        conversion: "",
-        base:"",
-        lagging:"",
-        spanA:"",
-        spanB:"",
+        conversion: 9,
+        base:26,
+        lagging:26,
+        spanA:26,
+        spanB:26,
     })
 
 

@@ -1,6 +1,6 @@
 <template>
 
-    <v-card :color="color" theme="dark" class="mb-3 zoom" :elevation="isHovering ? 24 : 6">
+    <v-card :color="color" theme="dark" class="mb-3 zoom" >
 
         <div class="d-flex flex-no-wrap justify-space-between">
 
@@ -36,35 +36,44 @@
 <script setup>
 import { computed, defineProps, ref } from 'vue'
 
-    const props = defineProps(['indicator'])
+    const props = defineProps(['indicator', 'index'])
     const listConfig = ref([])
-    let color = "#952175"
+    const colorList = [ "indigo-darken-3", "indigo-lighten-1", "indigo-lighten-3", "indigo-lighten-5"]
     let img_card = ""
+    let color = ""
+
+    console.log(props.index)
 
     const configSTR = computed( () => {
         const lista = []
         if(  props.indicator.indicatorName === "MACD"){
-            color = "blue-grey"
+            color = colorList[ props.index ]
             img_card = "https://res.cloudinary.com/lumayo/image/upload/v1645910477/ma_lybvuq.png"
             for (const iterator of props.indicator.config) {
                 
                 lista.push(macdResumen(iterator))
                 
             }
-        }else if(  props.indicator.indicatorName === "Ichimoku"){
-            color = "red-darken-3"
+        }else if(  props.indicator.indicatorName === "ichimokuClouds"){
+            color = colorList[ props.index ]
             img_card ="https://res.cloudinary.com/lumayo/image/upload/v1645909786/ichimoku_mglko7.png"
             for (const iterator of props.indicator.config) { 
-                console.log(iterator)
                 lista.push(ichimokuResumen(iterator)) 
             }
         }
         else if(  props.indicator.indicatorName === "DonchianChannels"){
-            color = "amber-lighten-1"
+            color = colorList[ props.index ]
             img_card ="https://res.cloudinary.com/lumayo/image/upload/v1646446457/donchianchannels_waircd.png"
             for (const iterator of props.indicator.config) { 
-                console.log(iterator)
                 lista.push(donchianChannelsResumen(iterator)) 
+            }
+        }
+
+        else if(  props.indicator.indicatorName === "BollingerBands"){
+            color = colorList[ props.index ]
+            img_card ="https://res.cloudinary.com/lumayo/image/upload/v1646614788/bollinger_jzrcuo.png"
+            for (const iterator of props.indicator.config) { 
+                lista.push(bollingerBandsResumen(iterator)) 
             }
         }
         return lista
@@ -91,9 +100,16 @@ import { computed, defineProps, ref } from 'vue'
         return resumen
     }
 
+     function bollingerBandsResumen( config ) {
+        let resumen = `Periodos: ${ config.period },
+        Desviacion Estandar: ${ config.std }.`
+        return resumen
+    }
+
+    
+
     listConfig.value =  configSTR.value
 
-    console.log(listConfig.value)
 
 </script>
 

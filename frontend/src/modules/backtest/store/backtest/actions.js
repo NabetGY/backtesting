@@ -7,6 +7,11 @@ export const myAction = async ({ commit }) => {
 }
  */
 
+
+export const updateListIndicators = async ({ commit }, indicators ) => {
+    commit("updateListIndicators", indicators)
+}
+
 export const loadTickers = async ( { commit } ) => {
 
     const { data } = await backtestAPI.get('/tickers/ticker.json')

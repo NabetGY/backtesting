@@ -28,7 +28,7 @@ class TimeSeries(models.Model):
     ticker = models.ForeignKey( Ticker, on_delete=models.CASCADE, null=False, blank=False)
     interval = models.IntegerField( choices=INTERVALS )
     
-    date = models.DateTimeField()
+    time = models.DateTimeField()
     open = models.DecimalField( max_digits=11, decimal_places=4 )
     high = models.DecimalField( max_digits=11, decimal_places=4 )
     low = models.DecimalField( max_digits=11, decimal_places=4 )

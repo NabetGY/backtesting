@@ -11,6 +11,7 @@
                 <th class="text-left">STP</th>
                 <th class="text-left">STP %</th>
                 <th class="text-left">Positions</th>
+                <th class="text-left">Positions %</th>
                 <th class="text-left">TGT</th>
                 <th class="text-left">Price out</th>
                 <th class="text-left">Profit Loss</th>
@@ -29,14 +30,15 @@
                 </td>
                 <td>{{ item[1] }}</td>
                 <td>{{ item[2] }}</td>
-                <td>STP</td>
-                <td>STP %</td>
                 <td>{{ item[4] }}</td>
-                <td>TGT</td>
+                <td>{{ item[5] }}</td>
+                <td>{{ item[6] }}</td>
+                <td>{{ item[7] }}</td>
+                <td>{{ item[8] }}</td>
                 <td>{{ item[3] }}</td>
                 <td>
-                    <v-chip :color="getColor(item[5])" dark >
-                        {{ item[5] }}
+                    <v-chip :color="getColor(item[9])" dark >
+                        {{ item[9] }}
                     </v-chip>
                 </td>
             </tr>
