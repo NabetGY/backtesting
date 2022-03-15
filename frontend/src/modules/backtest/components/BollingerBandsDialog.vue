@@ -2,7 +2,7 @@
 
     <v-dialog v-model="dialog" activator="parent" :retain-focus="false">
 
-        <v-card min-width="500"> 
+        <v-card min-width="550"> 
 
             <v-toolbar color="primary">Bollinger Bandas</v-toolbar>
 
@@ -10,7 +10,7 @@
                 Configuracion
             </v-card-title>
 
-            <v-card-text>
+            <div class="px-6 pt-3">
                 
                 <v-text-field min=0 type="number" v-model="period" label="Periodo" required>
                 </v-text-field>
@@ -18,7 +18,7 @@
                 <v-text-field min=0 type="number" v-model="std" label="Desviacion Estandar" required>
                 </v-text-field>
 
-            </v-card-text>
+            </div>
     
             <v-card-actions>
 
@@ -39,8 +39,9 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue'
-    import { useStore } from 'vuex'
+import { v4 as uuidv4 } from 'uuid';
+import { ref } from 'vue'
+import { useStore } from 'vuex'
 
     const store = useStore()
     const period = ref(0)
@@ -48,6 +49,7 @@
     const dialog = ref(false)
 
     const indicators = ref({
+        id: uuidv4(),
         indicatorName: "BollingerBands",
         config: []
     })

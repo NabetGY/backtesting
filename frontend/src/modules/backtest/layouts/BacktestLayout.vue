@@ -1,13 +1,15 @@
 <template>
   <v-container class="height-app">
-    <v-row v-if="isLoading" class="loading-position" no-gutters>
-        <v-col cols="12" class="text-center">
-          <v-progress-circular  :size="70" :width="7" color="purple" indeterminate>
-          </v-progress-circular>
-        </v-col>
-    </v-row>
+      <v-overlay :model-value="isLoading" class="align-center justify-center">
+        <v-progress-circular
+          color="purple"
+          indeterminate
+          width="7"
+          size="70"
+        ></v-progress-circular>
+      </v-overlay>
 
-    <router-view v-else />
+    <router-view />
     
   </v-container>
 

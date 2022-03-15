@@ -10,7 +10,7 @@
                 Configuracion
             </v-card-title>
 
-            <v-card-text class="scroll-card">
+            <div class="scroll-card px-6 py-1">
 
                 <v-text-field
                     v-model="data.conversion"
@@ -67,7 +67,7 @@
                     required
                 ></v-text-field>
 
-            </v-card-text>
+            </div>
     
             <v-card-actions>
 
@@ -88,6 +88,7 @@
 </template>
 
 <script setup>
+import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 import { useStore } from 'vuex'
 
@@ -95,6 +96,7 @@ import { useStore } from 'vuex'
     const dialog = ref(false)
 
     const indicators = ref({
+        id: uuidv4(),
         indicatorName: "ichimokuClouds",
         config: []
     })

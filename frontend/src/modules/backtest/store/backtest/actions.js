@@ -35,7 +35,17 @@ export const addIndicator = ({ commit }, indicator ) => {
 }
 
 
+export const deleteIndicator = ({ commit }, id ) => {
+
+    commit("deleteIndicator", id )
+
+    return { ok: true }
+}
+
+
 export const startBacktest = async ({ commit, state }, tickerData ) => {
+
+    commit("loading")
 
     const indicator = state.indicators
 
@@ -45,21 +55,17 @@ export const startBacktest = async ({ commit, state }, tickerData ) => {
         indicatorsData.push({...element})
     })
 
-    const dataBacktest = {...tickerData, indicatorsData}
+    const dataBacktest = { ...tickerData, indicatorsData }
 
-    const { data } = await backtestAPI.post('/backtest/', dataBacktest)
-
-
-    commit("setBacktest", data.data)
-
-    return { ok: true, message: data.message }
-
-
-    /* commit("setTickerData", tickerData) */
+    try {
+        const { data } = await backtestAPI.post('/backtest/', dataBacktest)
+        commit("setBacktest", data.data)
+        commit("loading")
+        return { ok: true, message: data.message }
+        
+    } catch (error) {
+        commit("loading")
+        return { ok: false, message: error }   
+    }
 }
 
-/* export default startBacktest =  ({ commit }, tickerData) => {
-
-    
-
-} */

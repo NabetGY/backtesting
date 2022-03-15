@@ -1,9 +1,8 @@
 <template>
     <v-app>
-        <v-app-bar app absolute color="deep-purple">
-
-            <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title>Dashboard</v-toolbar-title>
+        <v-app-bar app absolute color="deep-purple" density="compact">
+            <v-app-bar-nav-icon color="deep-purple" @click="drawer = !drawer" class="ml-5" ></v-app-bar-nav-icon>
+            <v-app-bar-title>G-BACKTEST</v-app-bar-title>
         </v-app-bar>
 
         <v-navigation-drawer app v-model="drawer" absolute temporary>

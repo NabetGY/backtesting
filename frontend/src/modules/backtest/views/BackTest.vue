@@ -5,12 +5,14 @@
         
         <v-col cols="12" sm="8" class="mx-8">
 
-            <draggable v-model="indicators" :move="checkMove">
+            <draggable v-model="indicators">
+
                 <transition-group>
 
                     <IndicatorInfoCardVue v-for="(item, index) in indicators" :key="index" :indicator="item" :index="index"  />
 
                 </transition-group>
+                
             </draggable>
 
             <IndicatorDialogVue />
@@ -43,14 +45,6 @@ import { VueDraggableNext as  draggable } from 'vue-draggable-next'
             store.dispatch("backtest/updateListIndicators", newValue )
         }
     })
-        
-    function checkMove(evt){
-        console.log(evt)
-    }
-    /* const color = (name)  => {
-        const lista = ['uno', 'dos', 'tres', 'cuatro']
-        return lista[indicators.value.findIndex(indicator => indicator.indicatorName === name )]
-    } */
 
 </script>
 

@@ -1,17 +1,5 @@
 <template>
 
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="container bg-indigo-report py-3 rounded">
     <div class="row g-3">
         
@@ -62,21 +50,13 @@
 
 </template>
 
-<script>
+<script setup>
 import { useStore } from 'vuex'
-export default {
-    setup() {
-        const store = useStore()
 
-        const { resumen } = store.state.backtest.backtests[0]
+    const store = useStore()
 
-        return{
-            resumen
-        }
-    }
-    
+    const { resumen } = store.state.backtest.backtests[0]
 
-}
 </script>
 
 <style>

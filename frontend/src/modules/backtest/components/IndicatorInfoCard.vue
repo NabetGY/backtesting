@@ -19,7 +19,8 @@
                 </v-card-subtitle>
 
                 <v-card-actions class="ps-5">
-                    <v-btn class="ml-2" icon="mdi-cog" variant="outlined"></v-btn>
+                    <v-btn class="ml-2 btn-edit" icon="mdi-cog" variant="outlined"></v-btn>
+                    <v-btn @click="remove()" class="ml-2 btn-delete" icon="mdi-delete-circle" variant="outlined" ></v-btn>
                 </v-card-actions>
             </div>
 
@@ -35,14 +36,15 @@
 
 <script setup>
 import { computed, defineProps, ref } from 'vue'
+import useBacktest from '../composables/useBacktest'
+
+    const { removeIndicator, macdResumen, donchianChannelsResumen, bollingerBandsResumen, ichimokuResumen } = useBacktest()
 
     const props = defineProps(['indicator', 'index'])
     const listConfig = ref([])
     const colorList = [ "indigo-darken-3", "indigo-lighten-1", "indigo-lighten-3", "indigo-lighten-5"]
     let img_card = ""
     let color = ""
-
-    console.log(props.index)
 
     const configSTR = computed( () => {
         const lista = []
@@ -79,47 +81,34 @@ import { computed, defineProps, ref } from 'vue'
         return lista
     })
 
-    function ichimokuResumen( config ) {
-        let resumen = `
-        Linea de conversion: ${ config.conversion} periodos.
-        linea base: ${ config.base } periodos.
-        linea de retraso: ${ config.lagging } periodos.
-        Span A: ${ config.spanA }.
-        Span B: ${ config.spanB} .
-        `
-        return resumen
-    }
-
-    function macdResumen( config ) {
-        let resumen = `Tipo: ${ config.MA }, periodos: ${ config.period }.`
-        return resumen
-    }
-
-    function donchianChannelsResumen( config ) {
-        let resumen = `Tamaño del Periodo: ${ config.period }.`
-        return resumen
-    }
-
-     function bollingerBandsResumen( config ) {
-        let resumen = `Periodos: ${ config.period },
-        Desviacion Estandar: ${ config.std }.`
-        return resumen
-    }
-
-    
-
     listConfig.value =  configSTR.value
 
-
+    const remove = () => {
+        
+        removeIndicator( props.indicator.id )
+    }
+    
 </script>
 
 <style scoped>
     .zoom {
+        position: relative;
         will-change: transform;
         transition: transform 450ms;
     }
     .zoom:hover{
         transition: transform 125ms;
         transform: scale(1.02);
+    }
+
+    .btn-edit{
+        position: absolute;
+        bottom: 20px;
+    }
+
+    .btn-delete{
+        position: absolute;
+        left: 75px;
+        bottom: 20px;
     }
 </style>

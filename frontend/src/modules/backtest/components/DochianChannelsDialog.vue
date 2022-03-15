@@ -10,12 +10,12 @@
                 Configuracion
             </v-card-title>
 
-            <v-card-text>
+            <div class="px-6 pt-3">
                 
                 <v-text-field min=0 type="number" v-model="period" label="Periodo" required>
                 </v-text-field>
 
-            </v-card-text>
+            </div>
     
             <v-card-actions>
 
@@ -36,6 +36,8 @@
 </template>
 
 <script setup>
+    import { v4 as uuidv4 } from 'uuid';
+
     import { ref } from 'vue'
     import { useStore } from 'vuex'
 
@@ -44,6 +46,7 @@
     const dialog = ref(false)
 
     const indicators = ref({
+        id: uuidv4(),
         indicatorName: "DonchianChannels",
         config: []
     })
