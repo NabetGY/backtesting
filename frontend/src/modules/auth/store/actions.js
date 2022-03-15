@@ -8,10 +8,10 @@
 
 export const createUser = async ( { commit }, user ) => {
 
-    const { username, email, password, image_perfil, number_phone } = user
+    const { username, email, password } = user
 
     try {
-        const { data } = await axios.post('https://lumayo-arrendamientos.herokuapp.com/user/register/', { email, password, username, image_perfil, number_phone })
+        const { data } = await axios.post('http://127.0.0.1:8000/usuario/', { email, password, username })
         
         const { message } = data
 
@@ -22,10 +22,11 @@ export const createUser = async ( { commit }, user ) => {
         return { ok: true, message: message }
 
     } catch (error) {
+
         console.log('error')
 
         commit('logout')
-        location.reload();
+        /* location.reload(); */
         return { ok: false, message: error.response.data.error.message}
     }
 }
@@ -61,10 +62,10 @@ export const updateUser = async ( { commit }, user ) => {
 
 export const signInUser = async ( { commit }, user ) => {
 
-    const { username, password } = user
+    const { email, password } = user
     try {
 
-        const resp = await axios.post('https://lumayo-arrendamientos.herokuapp.com/user/login/', { username, password })
+        const resp = await axios.post('http://127.0.0.1:8000/login/', { email, password })
 
         const { data } = resp
 
@@ -76,7 +77,7 @@ export const signInUser = async ( { commit }, user ) => {
         
     } catch (error) {
         commit('logout')
-        location.reload();
+        /* location.reload(); */
         console.log('error')
 
         return { ok: false, message: error.response.data.error.message }
@@ -88,7 +89,7 @@ export const signInUser = async ( { commit }, user ) => {
 export const userLogout = async ( { commit }, email ) => {
 
     try {
-        const resp = await axios.post('https://lumayo-arrendamientos.herokuapp.com/user/logout/', { email },
+        const resp = await axios.post('http://127.0.0.1:8000/logout/', { email },
             {
                 headers: {
                     Authorization: 'Bearer '+localStorage.getItem('token')
@@ -131,7 +132,7 @@ export const checkAuthentication = async({ commit }) => {
 
     try {
         console.log('try')
-        const response = await axios.post(`https://lumayo-arrendamientos.herokuapp.com/api/token/refresh/`, {
+        const response = await axios.post(`http://127.0.0.1:8000/api/token/refresh/`, {
             refresh: refreshToken
         });
         const {  access, refresh  } = response.data

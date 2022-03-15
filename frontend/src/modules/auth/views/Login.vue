@@ -21,18 +21,19 @@
                     v-model="loginForm.email"
                     :rules="rules.emailRules"
                     label="Correo electronico"
+                    clearable
                     required
                 ></v-text-field>
 
                 <v-text-field
                     :append-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :rules="[rules.required, rules.emailMatch]"
+                    :rules="rules.passwordRules"
                     :type="show4 ? 'text' : 'password'"
                     name="input-10-2"
                     label="Contraseña"
-                    hint="Minimo 8 caracteres"
                     v-model="loginForm.password"
                     @click:append="show4 = !show4"
+                    clearable
                 >
                 </v-text-field>
 
@@ -83,6 +84,31 @@ export default{
             }
         )
 
+        const onSubmit = async() => {
+            const { ok, message } = await loginUser( loginForm.value )
+            
+            if ( !ok ) {
+                Swal.fire('Error', message, 'error')
+            } 
+            else  {
+                Swal.fire(
+                {
+                    title:'Inicio Exitoso',
+                    text:'Bienvenido a G-BACKTEST',
+                    icon:'success',
+                    allowEscapeKey:false,
+                    allowOutsideClick:false
+                }
+                ).then((result) => 
+                    {
+                        if (result.isConfirmed) {
+                            router.push({ name: 'backtest' }) 
+                        } 
+                    }
+                )
+            }
+        }
+
         return {
             show4,
             valid,
@@ -90,43 +116,31 @@ export default{
             loginForm,
 
             validate() {
-                form.value.validate()
+                form.value.validate().then(val => {
+                    console.log(val.valid)
+                    if(val.valid){
+                        onSubmit()
+                    }
+                })
             },
 
             rules: {
                 emailRules: [
-                    v => !!v || 'Correo electronico requerido!',
-                    v => /.+@.+\..+/.test(v) || 'El correo tiene que ser valido',
+                    value => !!value || 'Correo electronico requerido!',
+                    value => /.+@.+\..+/.test(value) || 'El correo tiene que ser valido',
                 ],
-                required: value => !!value || 'Requerido.',
-                min: v => v.length >= 8 || 'Min 8 characters',
-                emailMatch: () => (`The email and password you entered don't match`),
+                nameRules: [
+                    value => !!value || 'Nombre de usuario es requerido.',
+                    value => (value && value.length <= 10) || 'Name must be less than 10 characters',
+                ],
+                passwordRules: [
+                    value => !! value || 'Requerido.',
+                    value => value.length >= 8 || 'Minimo 8 caracteres.',
+                    /* value => (`The email and password you entered don't match`), */
+                ],
             },
             
-            onSubmit: async() => {
-               const { ok, message } = await loginUser( loginForm.value )
-               
-               if ( !ok ) {
-                   Swal.fire('Error', message, 'error')
-               } 
-               else  {
-                   Swal.fire(
-                    {
-                        title:'Inicio Exitoso',
-                        text:'Bienvenido a G-BACKTEST',
-                        icon:'success',
-                        allowEscapeKey:false,
-                        allowOutsideClick:false
-                    }
-                    ).then((result) => 
-                        {
-                            if (result.isConfirmed) {
-                               router.push({ name: 'home' }) 
-                            } 
-                        }
-                    )
-                }
-            },
+            
         }
     }
 

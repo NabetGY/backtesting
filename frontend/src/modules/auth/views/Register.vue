@@ -22,6 +22,7 @@
                     :counter="10"
                     :rules="rules.nameRules"
                     label="Nombre de Usuario"
+                    clearable
                     required
                 ></v-text-field>
 
@@ -30,18 +31,19 @@
                     v-model="registerForm.email"
                     :rules="rules.emailRules"
                     label="Correo electronico"
+                    clearable
                     required
                 ></v-text-field>
 
                 <v-text-field
                     :append-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :rules="[rules.required, rules.emailMatch]"
+                    :rules="rules.passwordRules"
                     :type="show4 ? 'text' : 'password'"
                     name="input-10-2"
                     label="Contraseña"
-                    hint="Minimo 8 caracteres"
                     v-model="registerForm.password"
                     @click:append="show4 = !show4"
+                    clearable
                 >
                 </v-text-field>
 
@@ -87,6 +89,32 @@ export default{
                 password: "",
             }
         )
+        
+        const onSubmit= async() => {
+
+            const { ok, message } = await createUser( registerForm.value )
+            
+            if ( !ok ) {
+                Swal.fire('Error', message, 'error')
+            } 
+            else  {
+                Swal.fire(
+                {
+                    title:'Registro Exitoso',
+                    text:'Ahora inicia sesion',
+                    icon:'success',
+                    allowEscapeKey:false,
+                    allowOutsideClick:false
+                }
+                ).then((result) => 
+                    {
+                        if (result.isConfirmed) {
+                            router.push('login') 
+                        } 
+                    }
+                )
+            }
+        }
 
         return {
             show4,
@@ -94,48 +122,31 @@ export default{
             form,
             registerForm,
 
-            validate() {
-                form.value.validate()
-            },
-
             rules: {
                 emailRules: [
-                    v => !!v || 'Correo electronico requerido!',
-                    v => /.+@.+\..+/.test(v) || 'El correo tiene que ser valido',
+                    value => !!value || 'Correo electronico requerido!',
+                    value => /.+@.+\..+/.test(value) || 'El correo tiene que ser valido',
                 ],
                 nameRules: [
-                    v => !!v || 'Nombre de usuario es requerido.',
-                    v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+                    value => !!value || 'Nombre de usuario es requerido.',
+                    value => (value && value.length <= 10) || 'Name must be less than 10 characters',
                 ],
-                required: value => !!value || 'Requerido.',
-                min: v => v.length >= 8 || 'Min 8 characters',
-                emailMatch: () => (`The email and password you entered don't match`),
+                passwordRules: [
+                    value => !! value || 'Requerido.',
+                    value => value.length >= 8 || 'Minimo 8 caracteres.',
+                    /* value => (`The email and password you entered don't match`), */
+                ],
             },
 
-            onSubmit: async() => {
+            
 
-               const { ok, message } = await createUser( registerForm.value )
-               
-               if ( !ok ) {
-                   Swal.fire('Error', message, 'error')
-               } 
-               else  {
-                   Swal.fire(
-                    {
-                        title:'Registro Exitoso',
-                        text:'Ahora inicia sesion',
-                        icon:'success',
-                        allowEscapeKey:false,
-                        allowOutsideClick:false
+            validate() {
+                form.value.validate().then(val => {
+                    console.log(val.valid)
+                    if(val.valid){
+                        onSubmit()
                     }
-                    ).then((result) => 
-                        {
-                            if (result.isConfirmed) {
-                               router.push('login') 
-                            } 
-                        }
-                    )
-                }
+                })
             },
         }
     }
